@@ -9,6 +9,8 @@ col_chat, col_md = st.columns(2)
 with col_chat:
     if "messages" not in st.session_state:
         st.session_state.messages = [{"role": "system", "content": '模拟的content'}]
+    if "user_input" not in st.session_state:
+        st.session_state.user_input = ""
 
     # Display the existing chat messages in the left column
     for idx, message in enumerate(st.session_state.messages):
@@ -26,14 +28,14 @@ with col_chat:
     # Input and send button
     input_col, send_col = st.columns([9, 1])
     with input_col:
-        user_input = st.text_input("Type your message here:", key="input", on_change=None)
+        st.session_state.user_input = st.text_input("Type your message here:", key="input", value=st.session_state.user_input)
     with send_col:
         send_button = st.button("Send")
 
     if send_button:
-        if user_input:
-            st.session_state.messages.append({"role": "user", "content": user_input})
-            st.session_state.input = ""  # 清空输入框
+        if st.session_state.user_input:
+            st.session_state.messages.append({"role": "user", "content": st.session_state.user_input})
+            st.session_state.user_input = ""  # 清空用户输入
 
             # 模拟系统回复
             current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
