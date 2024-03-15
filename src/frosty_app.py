@@ -1,15 +1,14 @@
 import streamlit as st
 
-st.title("☃️ 文泉")
+st.title("☃️ Frosty")
 
-# 创建两列：左侧用于聊天，右侧用于显示Markdown文本
-col_chat, col_md = st.columns(2)
+# 创建两列：左侧用于聊天和Markdown文本显示，右侧保留空白
+col_chat, col_md = st.columns([0.8, 0.2])
 
 with col_chat:
     if "messages" not in st.session_state:
         st.session_state.messages = [{"role": "system", "content": '模拟的content'}]
 
-    # Display the existing chat messages in the left column
     for idx, message in enumerate(st.session_state.messages):
         if message["role"] == "system":
             st.write(message["content"])
@@ -22,8 +21,6 @@ with col_chat:
                     del st.session_state.messages[idx:]
                     break
 
-with col_md:
-    # 在右侧列中渲染Markdown文本
     md_content = """
     ## 测试Markdown内容
 
@@ -45,11 +42,17 @@ with col_md:
     """
     st.markdown(md_content)
 
-# 在侧边栏添加消息输入框和发送按钮
-with st.sidebar:
-    user_input = st.text_input("Type your message here:", key="input")
-    send_button = st.button("Send")
-    if send_button:
-        st.session_state.messages.append({"role": "user", "content": user_input})
-        # Reset the input box after sending the message
-        st.session_state["input"] = ""
+# 底部栏
+st.write("---")  # 画一条分割线
+col_input, col_file_uploader = st.columns([0.8, 0.2])
+with col_input:
+    user_input = st.text_input("Type your command here:", key="input")
+with col_file_uploader:
+    uploaded_file = st.file_uploader("Upload file", key="file_uploader")
+
+# 你可以在这里添加代码来处理用户输入和文件上传
+# 例如，如果用户输入了指令或上传了文件，你可以如何反馈
+if user_input:
+    st.write(f"You typed: {user_input}")
+if uploaded_file is not None:
+    st.write(f"You uploaded: {uploaded_file.name}")
