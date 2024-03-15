@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.title("☃️ Frosty")
+st.title("☃️ 文字实验室")
 
 # 创建两列：左侧用于聊天，右侧用于显示Markdown文本
 col_chat, col_md = st.columns(2)
