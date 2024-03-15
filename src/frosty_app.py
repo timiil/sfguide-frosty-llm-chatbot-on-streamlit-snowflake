@@ -11,7 +11,8 @@ st.title("☃️ Frosty")
 if "messages" not in st.session_state:
     # system prompt includes table information, rules, and prompts the LLM to produce
     # a welcome message to the user.
-    st.session_state.messages = [{"role": "system", "content": get_system_prompt()}]
+    # st.session_state.messages = [{"role": "system", "content": get_system_prompt()}]
+    st.session_state.messages = [{"role": "system", "content": '模拟的content'}]
 
 # Prompt for user input and save
 if prompt := st.chat_input():
