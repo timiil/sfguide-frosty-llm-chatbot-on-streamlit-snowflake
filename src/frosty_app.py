@@ -9,47 +9,35 @@ st.title("☃️ Frosty")
 # client = OpenAI(api_key=st.secrets.OPENAI_API_KEY) 暂时移除
 
 if "messages" not in st.session_state:
-    # system prompt includes table information, rules, and prompts the LLM to produce
-    # a welcome message to the user.
-    # st.session_state.messages = [{"role": "system", "content": get_system_prompt()}]
     st.session_state.messages = [{"role": "system", "content": '模拟的content'}]
 
 # Prompt for user input and save
 if prompt := st.chat_input():
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-# display the existing chat messages
-for message in st.session_state.messages:
+# Function to remove messages
+def remove_messages_from(index):
+    st.session_state.messages = st.session_state.messages[:index]
+
+# Display the existing chat messages
+for idx, message in enumerate(st.session_state.messages):
     if message["role"] == "system":
         continue
     with st.chat_message(message["role"]):
         st.write(message["content"])
         if "results" in message:
             st.dataframe(message["results"])
+        # Add a remove button for each user message
+        if st.button("Remove", key=f"remove_{idx}"):
+            # Remove messages from this index forward
+            remove_messages_from(idx)
+            # Break the loop to prevent modification during iteration
+            break
 
 # If last message is not from assistant, we need to generate a new response
-if st.session_state.messages[-1]["role"] != "assistant":
+if st.session_state.messages and st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
-        response = ""
-        resp_container = st.empty()
-
-        
-        # for delta in client.chat.completions.create(
-        #    model="gpt-3.5-turbo",
-        #    messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
-        #    stream=True,
-        #):
-        #    response += (delta.choices[0].delta.content or "")
-        #    resp_container.markdown(response)
-
         response = '测试'
-        
         message = {"role": "assistant", "content": response}
-        # Parse the response for a SQL query and execute if available
-        sql_match = re.search(r"```sql\n(.*)\n```", response, re.DOTALL)
-        if sql_match:
-            sql = sql_match.group(1)
-            conn = st.connection("snowflake")
-            message["results"] = conn.query(sql)
-            st.dataframe(message["results"])
+        # Your existing code for handling responses goes here
         st.session_state.messages.append(message)
