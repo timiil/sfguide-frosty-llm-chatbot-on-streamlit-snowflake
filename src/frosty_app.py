@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.title("☃️ Frosty")
+st.title("☃️ 文泉")
 
 # 创建两列：左侧用于聊天，右侧用于显示Markdown文本
 col_chat, col_md = st.columns(2)
@@ -8,12 +8,6 @@ col_chat, col_md = st.columns(2)
 with col_chat:
     if "messages" not in st.session_state:
         st.session_state.messages = [{"role": "system", "content": '模拟的content'}]
-
-    if prompt := st.text_input("Type your message here:"):
-        st.session_state.messages.append({"role": "user", "content": prompt})
-
-    def remove_messages_from(index):
-        del st.session_state.messages[index:]
 
     # Display the existing chat messages in the left column
     for idx, message in enumerate(st.session_state.messages):
@@ -25,7 +19,7 @@ with col_chat:
                 st.write(message["content"])
             with col2:
                 if st.button("🗑️", key=f"remove_{idx}"):
-                    remove_messages_from(idx)
+                    del st.session_state.messages[idx:]
                     break
 
 with col_md:
@@ -49,4 +43,13 @@ with col_md:
     line 3
     ```
     """
-    st.markdown(md_content, unsafe_allow_html=False)
+    st.markdown(md_content)
+
+# 在侧边栏添加消息输入框和发送按钮
+with st.sidebar:
+    user_input = st.text_input("Type your message here:", key="input")
+    send_button = st.button("Send")
+    if send_button:
+        st.session_state.messages.append({"role": "user", "content": user_input})
+        # Reset the input box after sending the message
+        st.session_state["input"] = ""
